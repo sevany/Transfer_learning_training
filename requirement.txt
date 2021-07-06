@@ -1,0 +1,14 @@
+pandas
+numpy
+itertools
+keras==2.2.4
+sklearn
+matplotlib
+datetime
+time
+math
+pickles
+PIL==8.2.0
+
+
+Animal=data['antelope','bat','beaver','bobcat','buffalo','chihuahua','chimpanzee','collie','dalmatian','german+shepherd','grizzly+bear','hippopotamus','horse','killer+whale','mole','moose','mouse','otter','ox','persian+cat','raccoon','rat','rhinoceros','seal','siamese+cat','spider+monkey','squirrel','walrus','weasel','wolf']
