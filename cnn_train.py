@@ -104,28 +104,25 @@ y_test_encoded  = lb.transform(y_test)
 # # cek nilainya
 # y_test_encoded
 
+baseModel = keras.applications.VGG16(weights="imagenet", include_top=False,
+    input_tensor=keras.layers.Input(shape=input_shape))
 
+headModel = baseModel.output
+headModel = keras.layers.Flatten(name="flatten")(headModel)
+headModel = keras.layers.Dense(512, activation="relu")(headModel)
+headModel = keras.layers.Dropout(0.5)(headModel)
+headModel = keras.layers.Dense(30, activation="softmax")(headModel)
 
+animal_model = keras.models.Model(inputs=baseModel.input, outputs=headModel)
 
-# mulai membuat arsitektur NN dengan tipe fully connected layer
-input_layer    = Input(shape=(img_width, img_height,3), dtype='float')
-# buat hidden layer ke-1 dengan jumlah node sebanyak 50
-hidden_1 = Dense(50, activation='relu', name='hidden_1')(input_layer)
+for layer in baseModel.layers:
+    layer.trainable = False
 
-#buat hidden layer ke-2 dengan jumlah node sebanyak 100
-hidden_2 = Dense(100, activation='relu', name='hidden_2')(hidden_1)
+opt = keras.optimizers.SGD(lr=1e-4, momentum=0.9)
+animal_model.compile(loss="categorical_crossentropy", optimizer=opt,
+    metrics=["accuracy"])
 
-# buat hidden layer ke-3 dengan jumlah node sebanyak 50
-hidden_3 = Dense(50, activation='relu', name='hidden_3')(hidden_2)
-
-# membuat output layer dengan jumlah node sebanyak data_output (3)
-output_layer = Dense(30, activation='softmax')(hidden_3)
-# membuat modelnya dengan memasukan input dan outputnya
-animal_model = Model(inputs=input_layer, outputs=output_layer)
-animal_model.summary()
-opt = optimizers.SGD(lr=0.001, momentum=0.9)
-animal_model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
-
+print(animal_model.summary())
 
 # tentukan nilai learning-rate untuk optimizer yang digunakan
 # opt = SGD(lr=1e-4, momentum=0.9)
@@ -135,7 +132,7 @@ animal_model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['a
 # memulai pelatihan
 
 # tentukan jumlah iterasi / perulangan pembelajaran yang digunakan
-iterasi = 100
+iterasi = 200
 
 # tentukan jumlah data yang akan dimasukan ke dalam NN setiap satu iterasi
 my_batch_size = 10
